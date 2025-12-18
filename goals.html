@@ -144,13 +144,15 @@
   const db = getFirestore(app);
   const auth = getAuth(app);
 
+  let email = "";
   const goalsDiv = document.getElementById("goals");
 
   auth.onAuthStateChanged(async user => {
     if (!user) return;
+    email = user.email;
 
     const snap = await getDocs(
-      collection(db, "users", user.uid, "goals")
+      collection(db, "users", eamil, "goals")
     );
 
     goalsDiv.innerHTML = "";
@@ -185,17 +187,17 @@
     if (!user) return;
 
     await updateDoc(
-      doc(db, "users", user.uid, "goals", goalId),
+      doc(db, "users", email, "goals", goalId),
       { completed: true }
     );
 
     await updateDoc(
-      doc(db, "users", user.uid),
+      doc(db, "users", ),
       { xp: increment(10) }
     );
 
     await addDoc(
-      collection(db, "users", user.uid, "xpHistory"),
+      collection(db, "users", email, "xpHistory"),
       {
         amount: 10,
         reason: `Completed goal: ${title}`,
