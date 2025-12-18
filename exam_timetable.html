@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Exam Timetable • StudyEase</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #0F172A;
+    color: #E5E7EB;
+  }
+
+  header {
+    background: #1E293B;
+    padding: 18px;
+    text-align: center;
+  }
+
+  header h1 {
+    margin: 0;
+    color: #3B82F6;
+  }
+
+  main {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 20px;
+  }
+
+  .exam-card {
+    background: #1E293B;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+    border-left: 5px solid #334155;
+  }
+
+  .exam-card.nearest {
+    border-left: 5px solid #22C55E;
+    background: #102A43;
+  }
+
+  .subject {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .date {
+    color: #CBD5F5;
+    margin-top: 6px;
+  }
+
+  .days {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #94A3B8;
+  }
+
+  .empty {
+    text-align: center;
+    color: #94A3B8;
+    margin-top: 40px;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📅 Exam Timetable</h1>
+  <p>Stay prepared, stay confident</p>
+</header>
+
+<main id="examList">
+  <p class="empty">Loading exams...</p>
+</main>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBMEmLkJ8_-A1iSD_IF2NccOJHdcRm_Lug",
+    authDomain: "study-2f23d.firebaseapp.com",
+    projectId: "study-2f23d",
+    storageBucket: "study-2f23d.firebasestorage.app",
+    messagingSenderId: "213003244292",
+    appId: "1:213003244292:web:ef994cb72bc3d265037651"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const examList = document.getElementById("examList");
+
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = "auth.html";
+    } else {
+      loadExams(user);
+    }
+  });
+
+  function loadExams(user) {
+    db.collection("users")
+      .doc(user.email)
+      .collection("exams")
+      .orderBy("examDateTime")
+      .get()
+      .then(snapshot => {
+        examList.innerHTML = "";
+
+        if (snapshot.empty) {
+          examList.innerHTML = `<p class="empty">No exams added yet 📘</p>`;
+          return;
+        }
+
+        const now = new Date();
+        let nearestFound = false;
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const examDate = data.examDateTime.toDate();
+
+          if (examDate < now) return;
+
+          const diffDays = Math.ceil(
+            (examDate - now) / (1000 * 60 * 60 * 24)
+          );
+
+          const card = document.createElement("div");
+          card.className = "exam-card";
+
+          if (!nearestFound) {
+            card.classList.add("nearest");
+            nearestFound = true;
+          }
+
+          card.innerHTML = `
+            <div class="subject">${data.subject}</div>
+            <div class="date">
+              ${examDate.toDateString()} • 
+              ${examDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </div>
+            <div class="days">
+              ⏳ ${diffDays} day${diffDays !== 1 ? "s" : ""} left
+            </div>
+          `;
+
+          examList.appendChild(card);
+        });
+      })
+      .catch(err => {
+        examList.innerHTML = `<p class="empty">Error loading exams</p>`;
+        console.error(err);
+      });
+  }
+</script>
+
+</body>
+</html>
