@@ -65,6 +65,21 @@
     color: #94A3B8;
     margin-top: 40px;
   }
+  .cancel-btn {
+  margin-top: 10px;
+  background: #EF4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.cancel-btn:hover {
+  background: #DC2626;
+}
+
 </style>
 </head>
 
@@ -148,13 +163,17 @@
           card.innerHTML = `
             <div class="subject">${data.subject}</div>
             <div class="date">
-              ${examDate.toDateString()} • 
-              ${examDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                ${examDate.toDateString()} • 
+                ${examDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </div>
             <div class="days">
-              ⏳ ${diffDays} day${diffDays !== 1 ? "s" : ""} left
+                ⏳ ${diffDays} day${diffDays !== 1 ? "s" : ""} left
             </div>
-          `;
+            <button class="cancel-btn" onclick="cancelExam('${doc.id}', '${user.email}')">
+                ❌ Cancel Exam
+            </button>
+            `;
+
 
           examList.appendChild(card);
         });
@@ -164,6 +183,26 @@
         console.error(err);
       });
   }
+  function cancelExam(examId, userEmail) {
+  const confirmDelete = confirm("Are you sure you want to cancel this exam?");
+
+  if (!confirmDelete) return;
+
+  db.collection("users")
+    .doc(userEmail)
+    .collection("exams")
+    .doc(examId)
+    .delete()
+    .then(() => {
+      alert("Exam cancelled successfully ✅");
+      loadExams(auth.currentUser); // refresh list
+    })
+    .catch(error => {
+      alert("Error cancelling exam ❌");
+      console.error(error);
+    });
+}
+
 </script>
 
 </body>
