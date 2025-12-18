@@ -179,6 +179,18 @@
     alert("Goal added successfully 🎉");
     document.getElementById("title").value = "";
   };
+  const dayCheckboxes = daysBox.querySelectorAll("input[type='checkbox']");
+
+    dayCheckboxes.forEach(cb => {
+    cb.addEventListener("change", () => {
+        // If weekly → allow only ONE day
+        if (type.value === "weekly") {
+        dayCheckboxes.forEach(other => {
+            if (other !== cb) other.checked = false;
+        });
+        }
+    });
+    });
 </script>
 
 </body>
