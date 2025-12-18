@@ -6,49 +6,106 @@
 
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: #f4f6fa;
-    padding: 30px;
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .box {
-    max-width: 400px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
+
+  .card {
+    background: #fff;
+    width: 420px;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
   }
-  input, select, button {
+
+  h2 {
+    margin-top: 0;
+    text-align: center;
+    color: #4f46e5;
+  }
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  input, select {
     width: 100%;
-    padding: 10px;
-    margin: 8px 0;
+    padding: 12px;
+    margin-top: 6px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
   }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: #4f46e5;
+  }
+
+  .days {
+    display: none;
+    margin-bottom: 10px;
+  }
+
   .days label {
-    margin-right: 10px;
+    display: inline-block;
+    margin: 6px 8px 6px 0;
+    font-weight: normal;
   }
+
+  .xp {
+    text-align: center;
+    background: #eef2ff;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #4338ca;
+    margin-bottom: 15px;
+  }
+
   button {
-    background: #4f46e5;
-    color: white;
+    width: 100%;
+    padding: 12px;
     border: none;
-    border-radius: 6px;
+    border-radius: 12px;
+    background: #4f46e5;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background: #4338ca;
   }
 </style>
 </head>
 
 <body>
 
-<div class="box">
-  <h2>Add Goal</h2>
+<div class="card">
+  <h2>🎯 Add New Goal</h2>
 
-  <input id="title" placeholder="Goal title">
+  <label>Goal Title</label>
+  <input id="title" placeholder="Eg: Study Maths for 1 hour">
 
+  <label>Goal Type</label>
   <select id="type">
     <option value="daily">Daily</option>
     <option value="weekly">Weekly</option>
-    <option value="custom">Particular Days</option>
+    <option value="custom">Specific Days</option>
   </select>
 
-  <div class="days" id="daysBox" style="display:none">
+  <div class="days" id="daysBox">
     <label><input type="checkbox" value="Mon"> Mon</label>
     <label><input type="checkbox" value="Tue"> Tue</label>
     <label><input type="checkbox" value="Wed"> Wed</label>
@@ -58,7 +115,7 @@
     <label><input type="checkbox" value="Sun"> Sun</label>
   </div>
 
-  <input id="xp" type="number" placeholder="XP (e.g. 10)">
+  <div class="xp">⭐ Completing this goal gives <b>10 XP</b></div>
 
   <button onclick="addGoal()">Add Goal</button>
 </div>
@@ -71,48 +128,49 @@
   import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
   const firebaseConfig = {
-    // 🔴 YOUR CONFIG HERE
+    // 🔴 YOUR FIREBASE CONFIG
   };
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const auth = getAuth(app);
 
-  const typeSelect = document.getElementById("type");
+  const type = document.getElementById("type");
   const daysBox = document.getElementById("daysBox");
 
-  typeSelect.onchange = () => {
-    daysBox.style.display =
-      typeSelect.value === "daily" ? "none" : "block";
-  };
+  type.addEventListener("change", () => {
+    daysBox.style.display = type.value === "daily" ? "none" : "block";
+  });
 
   window.addGoal = async () => {
     const user = auth.currentUser;
     if (!user) return alert("Please login first");
 
-    const title = title.value;
-    const type = typeSelect.value;
-    const xpVal = Number(xp.value);
+    const title = document.getElementById("title").value.trim();
+    if (!title) return alert("Enter goal title");
 
     let days = [];
-    if (type !== "daily") {
+    if (type.value !== "daily") {
       days = [...daysBox.querySelectorAll("input:checked")]
         .map(d => d.value);
+      if (days.length === 0)
+        return alert("Select at least one day");
     }
 
     await addDoc(
       collection(db, "users", user.uid, "goals"),
       {
         title,
-        type,
+        type: type.value,
         days,
-        xp: xpVal,
+        xp: 10,
         completed: false,
         createdAt: serverTimestamp()
       }
     );
 
-    alert("Goal added successfully 🎯");
+    alert("Goal added successfully 🎉");
+    document.getElementById("title").value = "";
   };
 </script>
 
