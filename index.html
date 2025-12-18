@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>StudyEase</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #0F172A;
+    color: #E5E7EB;
+  }
+
+  header {
+    text-align: center;
+    padding: 20px;
+    background: #1E293B;
+  }
+
+  header h1 {
+    margin: 0;
+    color: #3B82F6;
+  }
+
+  main {
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .card {
+    background: #1E293B;
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  button {
+    background: #3B82F6;
+    border: none;
+    padding: 8px 14px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
+  input {
+    padding: 8px;
+    width: 100%;
+    border-radius: 6px;
+    border: none;
+    margin-top: 8px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    background: #334155;
+    padding: 6px;
+    margin-top: 6px;
+    border-radius: 6px;
+  }
+
+  #timer {
+    font-size: 2rem;
+    margin: 10px 0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 15px;
+    color: #94A3B8;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>StudyEase</h1>
+  <p>Study smart. Stay calm.</p>
+</header>
+
+<main>
+
+  <!-- Study Timer -->
+  <section class="card">
+    <h2>⏱️ Study Timer</h2>
+    <div id="timer">25:00</div>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="resetTimer()">Reset</button>
+    <p>Sessions today: <span id="sessions">0</span></p>
+  </section>
+
+  <!-- Task List -->
+  <section class="card">
+    <h2>📝 Today's Tasks</h2>
+    <input type="text" id="taskInput" placeholder="Add a task">
+    <button onclick="addTask()">Add Task</button>
+    <ul id="taskList"></ul>
+  </section>
+
+  <!-- Calm Break -->
+  <section class="card">
+    <h2>🌬️ Calm Break</h2>
+    <p>Feeling tired or nervous?</p>
+    <button onclick="startBreathing()">Start 1-min Breathing</button>
+    <p id="breathText"></p>
+  </section>
+
+</main>
+
+<footer>
+  Made for students • No pressure 🌱
+</footer>
+
+<script>
+  let time = 1500;
+  let interval = null;
+  let sessions = 0;
+
+  function updateTimer() {
+    let min = Math.floor(time / 60);
+    let sec = time % 60;
+    document.getElementById("timer").innerText =
+      `${min}:${sec < 10 ? "0" : ""}${sec}`;
+  }
+
+  function startTimer() {
+    if (interval) return;
+
+    interval = setInterval(() => {
+      time--;
+      updateTimer();
+
+      if (time <= 0) {
+        clearInterval(interval);
+        interval = null;
+        time = 1500;
+        sessions++;
+        document.getElementById("sessions").innerText = sessions;
+        alert("Great job! Take a short break 😊");
+        updateTimer();
+      }
+    }, 1000);
+  }
+
+  function resetTimer() {
+    clearInterval(interval);
+    interval = null;
+    time = 1500;
+    updateTimer();
+  }
+
+  function addTask() {
+    const input = document.getElementById("taskInput");
+    if (input.value.trim() === "") return;
+
+    const li = document.createElement("li");
+    li.innerText = input.value;
+    document.getElementById("taskList").appendChild(li);
+    input.value = "";
+  }
+
+  function startBreathing() {
+    const text = document.getElementById("breathText");
+    text.innerText = "Breathe in… Breathe out…";
+
+    setTimeout(() => {
+      text.innerText = "Good job 👍 You’re doing fine.";
+    }, 60000);
+  }
+</script>
+
+</body>
+</html>

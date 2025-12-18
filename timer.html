@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Study Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #0F172A;
+  color: #E5E7EB;
+}
+
+.container {
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: #1E293B;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 15px;
+}
+
+h2, h3 {
+  text-align: center;
+  color: #3B82F6;
+}
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background: #3B82F6;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.secondary {
+  background: #dc2626; /* Red for cancel */
+}
+
+#timerUI button:first-of-type {
+  background: #f87171; /* Pinkish red for stop */
+}
+
+.plan {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #CBD5F5;
+}
+
+.timer-screen {
+  display: none;
+  text-align: center;
+}
+
+.timer {
+  font-size: 6rem;
+  margin: 30px 0;
+  color: #38BDF8;
+  text-shadow: 0 0 20px #38BDF8, 0 0 40px #38BDF8;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+}
+
+#endClock {
+  color: #94A3B8;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.hidden {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="mainUI">
+
+  <h2>📚 Study Timer</h2>
+
+  <!-- AUTO MODE -->
+  <div class="card">
+    <h3>Auto Mode</h3>
+    <input type="number" id="totalStudy" placeholder="Total study time (minutes)" oninput="generatePlan()">
+    <input type="time" id="endTime" placeholder="Time to end studying">
+    <div class="plan" id="planBox"></div>
+    <button onclick="startAuto()">Start Auto Timer</button>
+  </div>
+
+  <!-- MANUAL MODE -->
+  <div class="card">
+    <h3>Manual Mode</h3>
+    <button onclick="startManualStudy()">Start Study</button>
+    <button class="secondary" onclick="startManualBreak()">Start Break</button>
+  </div>
+
+</div>
+
+<!-- TIMER SCREEN -->
+<div class="container timer-screen" id="timerUI">
+  <h2 id="timerLabel">Study Time</h2>
+  <div id="endClock"></div>
+  <div class="timer" id="timerDisplay">00:00</div>
+  <button onclick="stopTimer()">Stop</button>
+  <button class="secondary" onclick="cancelTimer()">Cancel</button>
+</div>
+
+<script>
+let interval;
+let timeLeft = 0;
+let autoPlan = [];
+let planIndex = 0;
+
+/* FORMAT END TIME */
+function formatTime(t) {
+  let [h, m] = t.split(":");
+  h = Number(h);
+  let ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return `${h}:${m} ${ampm}`;
+}
+
+/* SHOW END TIME CLOCK */
+function showEndClock() {
+  const endTime = document.getElementById("endTime").value;
+  if (!endTime) {
+    document.getElementById("endClock").innerText = "";
+    return;
+  }
+  document.getElementById("endClock").innerText =
+    "Ends at " + formatTime(endTime);
+}
+
+/* GENERATE AUTO PLAN */
+let actualTotal = 0;
+function generatePlan() {
+  const total = Number(document.getElementById("totalStudy").value);
+  actualTotal = total;
+  const planBox = document.getElementById("planBox");
+  planBox.innerHTML = "";
+  autoPlan = [];
+
+  if (!total || total <= 0) return;
+
+  let remaining = total;
+
+  while (remaining > 0) {
+    if (remaining >= 30 && remaining <=40) {
+      let study = Math.min(40, remaining);
+      autoPlan.push({ label: "Study Time", time: study });
+      remaining -= study;
+    }
+    else{
+      let study = Math.min(1, remaining);
+      autoPlan.push({ label: "Study Time", time: study });
+      remaining -= study;
+    }
+
+    if (remaining > 0) {
+      autoPlan.push({ label: "Break Time", time: 5 });
+      actualTotal += 5;
+    }
+  }
+
+  autoPlan.forEach((p, i) => {
+    planBox.innerHTML += `${i + 1}. ${p.label} – ${p.time} min<br>`;
+  });
+}
+
+/* CALCULATE STUDY TIME FROM AVAILABLE TIME */
+function calculateStudyFromAvailable(available) {
+  let s = Math.floor(available);
+  while (s > 0) {
+    let tempActual = s;
+    let remaining = s;
+    while (remaining > 0) {
+      let study = Math.min(remaining >= 30 && remaining <= 40 ? 40 : 30, remaining);
+      remaining -= study;
+      if (remaining > 0) {
+        tempActual += 5;
+      }
+    }
+    if (tempActual <= available) return s;
+    s--;
+  }
+  return 0;
+}
+
+/* SHOW/HIDE UI */
+function showTimer() {
+  document.getElementById("mainUI").classList.add("hidden");
+  document.getElementById("timerUI").style.display = "block";
+}
+
+function showMain() {
+  document.getElementById("mainUI").classList.remove("hidden");
+  document.getElementById("timerUI").style.display = "none";
+  document.getElementById("endClock").innerText = "";
+}
+
+/* COUNTDOWN */
+function startCountdown(label, minutes, callback) {
+  clearInterval(interval);
+  timeLeft = minutes * 60;
+  document.getElementById("timerLabel").innerText = label;
+  showTimer();
+
+  interval = setInterval(() => {
+    let m = Math.floor(timeLeft / 60);
+    let s = timeLeft % 60;
+    document.getElementById("timerDisplay").innerText =
+      `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+    if (timeLeft <= 0) {
+      clearInterval(interval);
+      if (callback) callback();
+    }
+    timeLeft--;
+  }, 1000);
+}
+
+/* AUTO MODE */
+function startAuto() {
+  if (autoPlan.length === 0) {
+    alert("Enter study time first");
+    return;
+  }
+  planIndex = 0;
+  showEndClock();
+  runNextAuto();
+}
+
+function runNextAuto() {
+  if (planIndex >= autoPlan.length) {
+    alert("All sessions completed 🎉");
+    cancelTimer();
+    return;
+  }
+
+  const session = autoPlan[planIndex];
+  planIndex++;
+
+  startCountdown(session.label, session.time, runNextAuto);
+}
+
+/* MANUAL MODE */
+function startManualStudy() {
+  startCountdown("Study Time", 25);
+}
+
+function startManualBreak() {
+  startCountdown("Break Time", 5);
+}
+
+/* CONTROLS */
+function stopTimer() {
+  clearInterval(interval);
+}
+
+function cancelTimer() {
+  clearInterval(interval);
+  showMain();
+}
+const totalStudyInput = document.getElementById("totalStudy");
+const endTimeInput = document.getElementById("endTime");
+
+// When total study changes, auto-calculate end time
+totalStudyInput.addEventListener("input", () => {
+    generatePlan();
+  if (!actualTotal || actualTotal <= 0) return;
+
+  const now = new Date();
+  const end = new Date(now.getTime() + actualTotal*60000);
+
+  const hh = String(end.getHours()).padStart(2,'0');
+  const mm = String(end.getMinutes()).padStart(2,'0');
+  endTimeInput.value = `${hh}:${mm}`;
+});
+
+// When end time changes, auto-calculate total study duration
+endTimeInput.addEventListener("input", () => {
+  const endVal = endTimeInput.value;
+  if (!endVal) return;
+
+  const now = new Date();
+  const [hh, mm] = endVal.split(":").map(Number);
+  const endDate = new Date();
+  endDate.setHours(hh, mm, 0, 0);
+
+  let diff = (endDate - now) / 60000; // diff in minutes
+  if(diff < 0) diff = 0; // prevent negative
+  const studyTime = calculateStudyFromAvailable(diff);
+  totalStudyInput.value = studyTime;
+  generatePlan();
+});
+
+</script>
+
+</body>
+</html>

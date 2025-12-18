@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>StudyEase</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #0F172A;
+    color: #E5E7EB;
+  }
+
+  header {
+    text-align: center;
+    padding: 20px;
+    background: #1E293B;
+  }
+
+  header h1 {
+    margin: 0;
+    color: #3B82F6;
+  }
+
+  main {
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .card {
+    background: #1E293B;
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  button {
+    background: #3B82F6;
+    border: none;
+    padding: 10px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  input {
+    padding: 10px;
+    width: 100%;
+    border-radius: 6px;
+    border: none;
+    margin-top: 10px;
+  }
+
+  .link {
+    color: #60A5FA;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  #timer {
+    font-size: 2rem;
+    margin: 10px 0;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    background: #334155;
+    padding: 6px;
+    margin-top: 6px;
+    border-radius: 6px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 15px;
+    color: #94A3B8;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>StudyEase</h1>
+  <p>Study smart. Stay calm.</p>
+</header>
+
+<main>
+
+  <!-- AUTH UI -->
+  <section class="card" id="authSection">
+
+    <!-- SIGN IN -->
+    <div id="signInForm">
+      <h2>🔐 Sign In</h2>
+      <input type="email" placeholder="Email">
+      <input type="password" placeholder="Password">
+      <button id="signInBtn">Sign In</button>
+      <p class="link" onclick="showSignUp()">Don’t have an account? Sign Up</p>
+    </div>
+
+    <!-- SIGN UP -->
+    <div id="signUpForm" class="hidden">
+      <h2>📝 Sign Up</h2>
+      <input type="text" placeholder="Name">
+      <input type="email" placeholder="Email">
+      <input type="password" placeholder="Password">
+      <button id="signUpBtn">Create Account</button>
+      <p class="link" onclick="showSignIn()">Already have an account? Sign In</p>
+    </div>
+
+  </section>
+
+  <!-- APP CONTENT (SHOW AFTER LOGIN USING FIREBASE) -->
+  <div id="appContent" class="hidden">
+
+    <section class="card">
+      <h2>⏱️ Study Timer</h2>
+      <div id="timer">25:00</div>
+      <button>Start</button>
+      <button>Reset</button>
+    </section>
+
+    <section class="card">
+      <h2>📝 Today's Tasks</h2>
+      <input type="text" placeholder="Add a task">
+      <button>Add Task</button>
+      <ul></ul>
+    </section>
+
+    <section class="card">
+      <h2>🌬️ Calm Break</h2>
+      <button>Start 1-min Breathing</button>
+      <p></p>
+    </section>
+
+  </div>
+
+</main>
+
+<footer>
+  Made for students • No pressure 🌱
+</footer>
+
+<!-- ONLY UI TOGGLE JS (OPTIONAL – YOU CAN REMOVE IF YOU WANT) -->
+<script>
+  function showSignUp() {
+    document.getElementById("signInForm").classList.add("hidden");
+    document.getElementById("signUpForm").classList.remove("hidden");
+  }
+
+  function showSignIn() {
+    document.getElementById("signUpForm").classList.add("hidden");
+    document.getElementById("signInForm").classList.remove("hidden");
+  }
+</script>
+
+</body>
+</html>
