@@ -5,208 +5,199 @@
 <title>My Goals</title>
 
 <style>
-  body {
-    margin: 0;
-    font-family: "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
-    min-height: 100vh;
-    padding: 30px;
-  }
-
-  h2 {
-    text-align: center;
-    color: white;
-    margin-bottom: 25px;
-  }
-
-  .container {
-    max-width: 900px;
-    margin: auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-  }
-
-  .goal-card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.2s;
-  }
-
-  .goal-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .goal-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #1f2933;
-  }
-
-  .goal-type {
-    margin-top: 6px;
-    font-size: 14px;
-    color: #6b7280;
-  }
-
-  .goal-days {
-    font-size: 13px;
-    color: #4b5563;
-    margin-top: 6px;
-  }
-
-  .xp-badge {
-    margin-top: 12px;
-    display: inline-block;
-    background: #eef2ff;
-    color: #4338ca;
-    padding: 6px 10px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: bold;
-    width: fit-content;
-  }
-
-  .status {
-    margin-top: 10px;
-    font-size: 14px;
-  }
-
-  .done {
-    color: #16a34a;
-    font-weight: bold;
-  }
-
-  .pending {
-    color: #dc2626;
-    font-weight: bold;
-  }
-
-  button {
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 12px;
-    border: none;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-
-  .done-btn {
-    background: #4f46e5;
-    color: white;
-  }
-
-  .done-btn:hover {
-    background: #4338ca;
-  }
-
-  .completed-btn {
-    background: #22c55e;
-    color: white;
-    cursor: default;
-  }
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  min-height: 100vh;
+  padding: 30px;
+}
+h2 {
+  text-align: center;
+  color: white;
+}
+.container {
+  max-width: 900px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+.goal-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 15px 30px rgba(0,0,0,.15);
+}
+.goal-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+.goal-type, .goal-days {
+  font-size: 14px;
+  color: #6b7280;
+}
+.xp {
+  margin-top: 8px;
+  background: #eef2ff;
+  color: #4338ca;
+  padding: 6px 10px;
+  border-radius: 20px;
+  width: fit-content;
+}
+button {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+.done-btn {
+  background: #4f46e5;
+  color: white;
+}
+.completed-btn {
+  background: #22c55e;
+  color: white;
+}
+.disabled-btn {
+  background: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+}
 </style>
 </head>
 
 <body>
 
-<h2>📋 My Goals</h2>
-
+<h2>📋 Today’s Goals</h2>
 <div class="container" id="goals"></div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import {
-    getFirestore, collection, getDocs, doc,
-    updateDoc, increment, addDoc, serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, doc,
+  updateDoc, increment, addDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  // Firebase Config
-  const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyBMEmLkJ8_-A1iSD_IF2NccOJHdcRm_Lug",
   authDomain: "study-2f23d.firebaseapp.com",
-  projectId: "study-2f23d",
-  storageBucket: "study-2f23d.firebasestorage.app",
-  messagingSenderId: "213003244292",
-  appId: "1:213003244292:web:ef994cb72bc3d265037651",
-  measurementId: "G-WNCK3CT1V2"
+  projectId: "study-2f23d"
 };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-  let email = "";
-  const goalsDiv = document.getElementById("goals");
+const goalsDiv = document.getElementById("goals");
 
-  auth.onAuthStateChanged(async user => {
-    if (!user) return;
-    email = user.email;
+const today = new Date().toISOString().split("T")[0];
+const todayDay = new Date().toLocaleDateString("en-US", { weekday: "short" });
 
-    const snap = await getDocs(
-      collection(db, "users", email, "goals")
-    );
+function shouldShow(goal) {
+  if (goal.type === "daily") return true;
+  return goal.days?.includes(todayDay);
+}
 
-    goalsDiv.innerHTML = "";
+auth.onAuthStateChanged(async user => {
+  if (!user) return;
+  const email = user.email;
 
-    snap.forEach(docSnap => {
-      const g = docSnap.data();
+  const snap = await getDocs(
+    collection(db, "users", email, "goals")
+  );
 
-      goalsDiv.innerHTML += `
-        <div class="goal-card">
-          <div>
-            <div class="goal-title">${g.title}</div>
-            <div class="goal-type">Type: ${g.type}</div>
-            ${g.days?.length ? `<div class="goal-days">Days: ${g.days.join(", ")}</div>` : ""}
-            <div class="xp-badge">⭐ 10 XP</div>
-            <div class="status ${g.completed ? "done" : "pending"}">
-              ${g.completed ? "Completed" : "Pending"}
-            </div>
-          </div>
+  goalsDiv.innerHTML = "";
 
-          ${
-            g.completed
-              ? `<button class="completed-btn">Completed ✔</button>`
-              : `<button class="done-btn" onclick="completeGoal('${docSnap.id}', '${g.title}')">Mark as Done</button>`
-          }
-        </div>
-      `;
-    });
-  });
+  for (const docSnap of snap.docs) {
+    const g = docSnap.data();
+    const ref = doc(db, "users", email, "goals", docSnap.id);
 
-  window.completeGoal = async (goalId, title) => {
-    const user = auth.currentUser;
-    if (!user) return;
+    /* 🔁 RESET DAILY */
+    if (g.type === "daily" && g.lastShownDate !== today) {
+      await updateDoc(ref, {
+        completed: false,
+        lastShownDate: today
+      });
+      g.completed = false;
+    }
 
-    await updateDoc(
-      doc(db, "users", email, "goals", goalId),
-      { completed: true }
-    );
+    /* ❌ MISS PENALTY */
+    if (
+      g.lastShownDate &&
+      g.lastShownDate < today &&
+      !g.completed &&
+      g.lastPenaltyDate !== today &&
+      shouldShow({ ...g, days: [todayDay] })
+    ) {
+      await updateDoc(ref, { lastPenaltyDate: today });
 
-    await updateDoc(
-      doc(db, "users", ),
-      { xp: increment(10) }
-    );
+      await updateDoc(
+        doc(db, "users", email),
+        { xp: increment(-5) }
+      );
 
-    await addDoc(
-      collection(db, "users", email, "xpHistory"),
-      {
-        amount: 10,
-        reason: `Completed goal: ${title}`,
-        timestamp: serverTimestamp()
-      }
-    );
+      await addDoc(
+        collection(db, "users", email, "xpHistory"),
+        {
+          amount: -5,
+          reason: `Missed goal: ${g.title}`,
+          timestamp: serverTimestamp()
+        }
+      );
+    }
 
-    location.reload();
-  };
+    if (!shouldShow(g)) continue;
+
+    goalsDiv.innerHTML += `
+      <div class="goal-card">
+        <div class="goal-title">${g.title}</div>
+        <div class="goal-type">Type: ${g.type}</div>
+        ${g.days?.length ? `<div class="goal-days">Days: ${g.days.join(", ")}</div>` : ""}
+        <div class="xp">⭐ 10 XP</div>
+
+        ${
+          g.completed
+            ? `<button class="completed-btn">Completed ✔</button>`
+            : `<button class="done-btn" onclick="completeGoal('${docSnap.id}', '${g.title}')">Mark as Done</button>`
+        }
+      </div>
+    `;
+  }
+});
+
+window.completeGoal = async (goalId, title) => {
+  const user = auth.currentUser;
+  if (!user) return;
+  const email = user.email;
+
+  await updateDoc(
+    doc(db, "users", email, "goals", goalId),
+    {
+      completed: true,
+      lastCompletedDate: today
+    }
+  );
+
+  await updateDoc(
+    doc(db, "users", email),
+    { xp: increment(10) }
+  );
+
+  await addDoc(
+    collection(db, "users", email, "xpHistory"),
+    {
+      amount: 10,
+      reason: `Completed goal: ${title}`,
+      timestamp: serverTimestamp()
+    }
+  );
+
+  location.reload();
+};
 </script>
 
 </body>
