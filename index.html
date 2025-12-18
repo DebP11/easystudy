@@ -182,6 +182,15 @@
       signUpBtn.style.display = "none";
       logoutBtn.style.display = "inline-block";
       welcomeMsg.innerText = `Hi, ${user.displayName || user.email}`;
+      getUpcomingExam().then(result => {
+  if (!result) {
+    console.log("No upcoming exams 🎉");
+    return;
+  }
+    const [examName, examDate, daysLeft] = result;
+    document.getElementById("nextExam").innerText = examName + " on " + examDate.toDateString();
+    document.getElementById("daysLeft").innerText = daysLeft;
+    });
     } else {
       signInBtn.style.display = "inline-block";
       signUpBtn.style.display = "inline-block";
@@ -196,15 +205,6 @@
     });
   }
   
-  getUpcomingExam().then(result => {
-  if (!result) {
-    console.log("No upcoming exams 🎉");
-    return;
-  }
-    const [examName, examDate, daysLeft] = result;
-    document.getElementById("nextExam").innerText = examName + " on " + examDate.toDateString();
-    document.getElementById("daysLeft").innerText = daysLeft;
-    });
 
 
   function getUpcomingExam() {
