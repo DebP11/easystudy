@@ -38,45 +38,21 @@
     background: #1E293B;
     padding: 20px;
     border-radius: 12px;
+    text-align: center;
   }
 
   button {
     background: #3B82F6;
     border: none;
-    padding: 8px 14px;
+    padding: 10px 16px;
     color: white;
     border-radius: 8px;
     cursor: pointer;
-    margin-top: 8px;
+    margin: 6px 4px 0 0;
   }
 
   button:hover {
     opacity: 0.9;
-  }
-
-  input {
-    padding: 8px;
-    width: 100%;
-    border-radius: 6px;
-    border: none;
-    margin-top: 8px;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  li {
-    background: #334155;
-    padding: 6px;
-    margin-top: 6px;
-    border-radius: 6px;
-  }
-
-  #timer {
-    font-size: 2rem;
-    margin: 10px 0;
   }
 
   footer {
@@ -96,29 +72,19 @@
 
 <main>
 
-  <!-- Study Timer -->
+  <!-- Study Timer Button -->
   <section class="card">
     <h2>⏱️ Study Timer</h2>
-    <div id="timer">25:00</div>
-    <button onclick="startTimer()">Start</button>
-    <button onclick="resetTimer()">Reset</button>
-    <p>Sessions today: <span id="sessions">0</span></p>
+    <button onclick="location.href='timer.html'">Go to Timer</button>
   </section>
 
-  <!-- Task List -->
+  <!-- Authentication Buttons -->
   <section class="card">
-    <h2>📝 Today's Tasks</h2>
-    <input type="text" id="taskInput" placeholder="Add a task">
-    <button onclick="addTask()">Add Task</button>
-    <ul id="taskList"></ul>
-  </section>
-
-  <!-- Calm Break -->
-  <section class="card">
-    <h2>🌬️ Calm Break</h2>
-    <p>Feeling tired or nervous?</p>
-    <button onclick="startBreathing()">Start 1-min Breathing</button>
-    <p id="breathText"></p>
+    <h2>🔑 Account</h2>
+    <button id="signInBtn" onclick="location.href='auth.html'">Sign In</button>
+    <button id="signUpBtn" onclick="location.href='auth.html'">Sign Up</button>
+    <button id="logoutBtn" onclick="logout()" style="display:none;">Log Out</button>
+    <p id="welcomeMsg"></p>
   </section>
 
 </main>
@@ -127,61 +93,54 @@
   Made for students • No pressure 🌱
 </footer>
 
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+
 <script>
-  let time = 1500;
-  let interval = null;
-  let sessions = 0;
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
 
-  function updateTimer() {
-    let min = Math.floor(time / 60);
-    let sec = time % 60;
-    document.getElementById("timer").innerText =
-      `${min}:${sec < 10 ? "0" : ""}${sec}`;
-  }
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-  function startTimer() {
-    if (interval) return;
+  const signInBtn = document.getElementById("signInBtn");
+  const signUpBtn = document.getElementById("signUpBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const welcomeMsg = document.getElementById("welcomeMsg");
 
-    interval = setInterval(() => {
-      time--;
-      updateTimer();
+  // Check user login state
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      // User is signed in
+      signInBtn.style.display = "none";
+      signUpBtn.style.display = "none";
+      logoutBtn.style.display = "inline-block";
+      welcomeMsg.innerText = `Welcome, ${user.displayName || user.email || user.phoneNumber}!`;
+    } else {
+      // User is not signed in
+      signInBtn.style.display = "inline-block";
+      signUpBtn.style.display = "inline-block";
+      logoutBtn.style.display = "none";
+      welcomeMsg.innerText = "";
+    }
+  });
 
-      if (time <= 0) {
-        clearInterval(interval);
-        interval = null;
-        time = 1500;
-        sessions++;
-        document.getElementById("sessions").innerText = sessions;
-        alert("Great job! Take a short break 😊");
-        updateTimer();
-      }
-    }, 1000);
-  }
-
-  function resetTimer() {
-    clearInterval(interval);
-    interval = null;
-    time = 1500;
-    updateTimer();
-  }
-
-  function addTask() {
-    const input = document.getElementById("taskInput");
-    if (input.value.trim() === "") return;
-
-    const li = document.createElement("li");
-    li.innerText = input.value;
-    document.getElementById("taskList").appendChild(li);
-    input.value = "";
-  }
-
-  function startBreathing() {
-    const text = document.getElementById("breathText");
-    text.innerText = "Breathe in… Breathe out…";
-
-    setTimeout(() => {
-      text.innerText = "Good job 👍 You’re doing fine.";
-    }, 60000);
+  // Log out function
+  function logout() {
+    auth.signOut()
+      .then(() => {
+        alert("Logged out successfully");
+      })
+      .catch(error => alert(error.message));
   }
 </script>
 
