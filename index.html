@@ -126,7 +126,8 @@
 
     <div class="card">
       <h3>📅 Exam Countdown</h3>
-      <p class="highlight"><span id="daysLeft">45</span> days left</p>
+      <h4 id="nextExam">Loading...</h4>
+      <p class="highlight"><span id="daysLeft"></span> days left</p>
     </div>
 
     <div class="card">
@@ -194,6 +195,59 @@
       alert("Logged out");
     });
   }
+  
+  getUpcomingExam().then(result => {
+  if (!result) {
+    console.log("No upcoming exams 🎉");
+    return;
+  }
+    const [examName, examDate, daysLeft] = result;
+    document.getElementById("nextExam").innerText = examName + " on " + examDate.toDateString();
+    document.getElementById("daysLeft").innerText = daysLeft;
+    });
+
+
+  function getUpcomingExam() {
+  return new Promise((resolve, reject) => {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      resolve(null);
+      return;
+    }
+
+    const now = new Date();
+
+    firebase.firestore()
+      .collection("users")
+      .doc(user.email)
+      .collection("exams")
+      .orderBy("examDateTime")
+      .get()
+      .then(snapshot => {
+        for (const doc of snapshot.docs) {
+          const data = doc.data();
+          const examDate = data.examDateTime.toDate();
+
+          if (examDate >= now) {
+            const daysLeft = Math.ceil(
+              (examDate - now) / (1000 * 60 * 60 * 24)
+            );
+
+            resolve([
+              data.subject,     // exam name
+              examDate,         // exam date (Date object)
+              daysLeft          // days left
+            ]);
+            return;
+          }
+        }
+
+        resolve(null); // No upcoming exams
+      })
+      .catch(error => reject(error));
+  });
+}
+
 </script>
 
 </body>
