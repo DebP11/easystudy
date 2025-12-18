@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Goals</title>
+
+<style>
+  body {
+    font-family: Arial;
+    background: #eef2ff;
+    padding: 30px;
+  }
+  .goal {
+    background: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+  }
+  button {
+    padding: 8px 12px;
+    border: none;
+    background: #22c55e;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>My Goals</h2>
+<div id="goals"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore, collection, getDocs, doc, updateDoc,
+    increment, addDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    // 🔴 YOUR CONFIG HERE
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  const goalsDiv = document.getElementById("goals");
+
+  auth.onAuthStateChanged(async user => {
+    if (!user) return;
+
+    const snap = await getDocs(
+      collection(db, "users", user.uid, "goals")
+    );
+
+    goalsDiv.innerHTML = "";
+
+    snap.forEach(d => {
+      const g = d.data();
+
+      goalsDiv.innerHTML += `
+        <div class="goal">
+          <b>${g.title}</b><br>
+          Type: ${g.type}<br>
+          XP: ${g.xp}<br>
+          Status: ${g.completed ? "Done ✅" : "Pending"}<br><br>
+          ${!g.completed ? `<button onclick="completeGoal('${d.id}', ${g.xp}, '${g.title}')">Mark Done</button>` : ""}
+        </div>
+      `;
+    });
+  });
+
+  window.completeGoal = async (goalId, xp, title) => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    await updateDoc(
+      doc(db, "users", user.uid, "goals", goalId),
+      { completed: true }
+    );
+
+    await updateDoc(
+      doc(db, "users", user.uid),
+      { xp: increment(xp) }
+    );
+
+    await addDoc(
+      collection(db, "users", user.uid, "xpHistory"),
+      {
+        amount: xp,
+        reason: `Completed goal: ${title}`,
+        timestamp: serverTimestamp()
+      }
+    );
+
+    alert("XP added 🚀");
+    location.reload();
+  };
+</script>
+
+</body>
+</html>

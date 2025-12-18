@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Goal</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f6fa;
+    padding: 30px;
+  }
+  .box {
+    max-width: 400px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+  }
+  .days label {
+    margin-right: 10px;
+  }
+  button {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Add Goal</h2>
+
+  <input id="title" placeholder="Goal title">
+
+  <select id="type">
+    <option value="daily">Daily</option>
+    <option value="weekly">Weekly</option>
+    <option value="custom">Particular Days</option>
+  </select>
+
+  <div class="days" id="daysBox" style="display:none">
+    <label><input type="checkbox" value="Mon"> Mon</label>
+    <label><input type="checkbox" value="Tue"> Tue</label>
+    <label><input type="checkbox" value="Wed"> Wed</label>
+    <label><input type="checkbox" value="Thu"> Thu</label>
+    <label><input type="checkbox" value="Fri"> Fri</label>
+    <label><input type="checkbox" value="Sat"> Sat</label>
+    <label><input type="checkbox" value="Sun"> Sun</label>
+  </div>
+
+  <input id="xp" type="number" placeholder="XP (e.g. 10)">
+
+  <button onclick="addGoal()">Add Goal</button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    // 🔴 YOUR CONFIG HERE
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  const typeSelect = document.getElementById("type");
+  const daysBox = document.getElementById("daysBox");
+
+  typeSelect.onchange = () => {
+    daysBox.style.display =
+      typeSelect.value === "daily" ? "none" : "block";
+  };
+
+  window.addGoal = async () => {
+    const user = auth.currentUser;
+    if (!user) return alert("Please login first");
+
+    const title = title.value;
+    const type = typeSelect.value;
+    const xpVal = Number(xp.value);
+
+    let days = [];
+    if (type !== "daily") {
+      days = [...daysBox.querySelectorAll("input:checked")]
+        .map(d => d.value);
+    }
+
+    await addDoc(
+      collection(db, "users", user.uid, "goals"),
+      {
+        title,
+        type,
+        days,
+        xp: xpVal,
+        completed: false,
+        createdAt: serverTimestamp()
+      }
+    );
+
+    alert("Goal added successfully 🎯");
+  };
+</script>
+
+</body>
+</html>
