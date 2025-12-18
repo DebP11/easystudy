@@ -152,7 +152,7 @@
     email = user.email;
 
     const snap = await getDocs(
-      collection(db, "users", eamil, "goals")
+      collection(db, "users", email, "goals")
     );
 
     goalsDiv.innerHTML = "";
