@@ -7,83 +7,86 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: #0F172A;
-  color: #E5E7EB;
-}
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #0F172A;
+    color: #E5E7EB;
+  }
 
-header {
-  background: #1E293B;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  /* HEADER */
+  header {
+    background: #1E293B;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-header h1 {
-  margin: 0;
-  color: #3B82F6;
-}
+  header h1 {
+    margin: 0;
+    color: #3B82F6;
+  }
 
-.account {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+  .account {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-main {
-  padding: 20px;
-  display: grid;
-  gap: 20px;
-  max-width: 900px;
-  margin: auto;
-}
+  .account button {
+    padding: 8px 14px;
+  }
 
-.card {
-  background: #1E293B;
-  padding: 20px;
-  border-radius: 12px;
-}
+  /* MAIN */
+  main {
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+    max-width: 900px;
+    margin: auto;
+  }
 
-.grid {
-  display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-}
+  .card {
+    background: #1E293B;
+    padding: 20px;
+    border-radius: 12px;
+  }
 
-button {
-  background: #3B82F6;
-  border: none;
-  padding: 8px 14px;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-}
+  .grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
 
-button.done {
-  background: #22C55E;
-}
+  button {
+    background: #3B82F6;
+    border: none;
+    padding: 10px 16px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+  }
 
-.goal {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-}
+  button:hover {
+    opacity: 0.9;
+  }
 
-.highlight {
-  font-size: 2rem;
-  color: #22C55E;
-  font-weight: bold;
-}
+  .highlight {
+    font-size: 2rem;
+    color: #22C55E;
+    font-weight: bold;
+  }
 
-footer {
-  text-align: center;
-  padding: 15px;
-  color: #94A3B8;
-}
+  ul {
+    padding-left: 18px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 15px;
+    color: #94A3B8;
+  }
 </style>
 </head>
 
@@ -91,6 +94,8 @@ footer {
 
 <header>
   <h1>StudyEase</h1>
+
+  <!-- ACCOUNT (RIGHT SIDE) -->
   <div class="account">
     <span id="welcomeMsg"></span>
     <button id="signInBtn" onclick="location.href='auth.html'">Sign In</button>
@@ -101,33 +106,48 @@ footer {
 
 <main>
 
-<section class="card">
-  <h2>⚡ Quick Actions</h2>
-  <button onclick="location.href='timer.html'">⏱ Study Timer</button>
-  <button onclick="location.href='add_goal.html'">➕ Add Goal</button>
-  <button onclick="location.href='goals.html'">🎯 View Goals</button>
-  <button onclick="location.href='add_exam.html'">🗓 Add Exam</button>
-</section>
+  <!-- QUICK ACTIONS -->
+  <section class="card">
+    <h2>⚡ Quick Actions</h2>
+    <button onclick="location.href='timer.html'">⏱ Study Timer</button>
+    <button onclick="location.href='add_goal.html'">➕ Add Goal</button>
+    <button onclick="location.href='add_exam.html'">🗓 Add Exam</button>
+    <button onclick="location.href='exam_timetable.html'">📅 View Exam Timetable</button>
+    <button onclick="location.href='goals.html'">🎯 View Goals</button>
+  </section>
 
-<section class="grid">
+  <!-- DASHBOARD GRID -->
+  <section class="grid">
 
-  <div class="card">
-    <h3>⭐ XP</h3>
-    <p class="highlight"><span id="xp">0</span> XP</p>
-  </div>
+    <div class="card">
+      <h3>📌 Goals Remaining</h3>
+      <p>Today: <strong id="todayGoals">3</strong></p>
+      <p>This Week: <strong id="weekGoals">10</strong></p>
+    </div>
 
-  <div class="card">
-    <h3>🎯 Today’s Goals</h3>
-    <div id="goalsList">Loading...</div>
-  </div>
+    <div class="card">
+      <h3>📅 Exam Countdown</h3>
+      <h4 id="nextExam">Loading...</h4>
+      <p class="highlight"><span id="daysLeft"></span> days left</p>
+    </div>
 
-  <div class="card">
-    <h3>📅 Next Exam</h3>
-    <h4 id="examName">Loading...</h4>
-    <p class="highlight"><span id="daysLeft">--</span> days left</p>
-  </div>
+    <div class="card">
+      <h3>⭐ XP Level</h3>
+      <p class="highlight"><span id="xp">120</span> XP</p>
+      <p>Level up by staying consistent!</p>
+    </div>
 
-</section>
+    <div class="card">
+      <h3>👣 How to Increase XP</h3>
+      <ul>
+        <li>Complete daily goals</li>
+        <li>Finish study timer sessions</li>
+        <li>Maintain streaks</li>
+        <li>Weekly revision</li>
+      </ul>
+    </div>
+
+  </section>
 
 </main>
 
@@ -141,150 +161,103 @@ footer {
 <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBMEmLkJ8_-A1iSD_IF2NccOJHdcRm_Lug",
-  authDomain: "study-2f23d.firebaseapp.com",
-  projectId: "study-2f23d",
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyBMEmLkJ8_-A1iSD_IF2NccOJHdcRm_Lug",
+    authDomain: "study-2f23d.firebaseapp.com",
+    projectId: "study-2f23d",
+    storageBucket: "study-2f23d.firebasestorage.app",
+    messagingSenderId: "213003244292",
+    appId: "1:213003244292:web:ef994cb72bc3d265037651"
+  };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-const todayKey = new Date().toISOString().split("T")[0];
+  const signInBtn = document.getElementById("signInBtn");
+  const signUpBtn = document.getElementById("signUpBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const welcomeMsg = document.getElementById("welcomeMsg");
 
-auth.onAuthStateChanged(async user => {
-  if (!user) return;
-
-  document.getElementById("welcomeMsg").innerText = `Hi, ${user.email}`;
-  document.getElementById("logoutBtn").style.display = "inline-block";
-
-  await loadXP(user);
-  await processMissedGoals(user);
-  await loadTodayGoals(user);
-  await loadNextExam(user);
-});
-
-async function loadXP(user) {
-  const ref = db.collection("users").doc(user.email);
-  const snap = await ref.get();
-  if (!snap.exists) await ref.set({ xp: 0 });
-  document.getElementById("xp").innerText = snap.data().xp || 0;
-}
-
-async function loadTodayGoals(user) {
-  const goalsBox = document.getElementById("goalsList");
-  goalsBox.innerHTML = "";
-
-  const snap = await db.collection("users")
-    .doc(user.email)
-    .collection("goals")
-    .where("type", "==", "daily")
-    .get();
-
-  if (snap.empty) {
-    goalsBox.innerText = "No daily goals";
-    return;
+  auth.onAuthStateChanged(async user => {
+    if (user) {
+      signInBtn.style.display = "none";
+      signUpBtn.style.display = "none";
+      logoutBtn.style.display = "inline-block";
+      welcomeMsg.innerText = `Hi, ${user.displayName || user.email}`;
+      let xp = await firebase.firestore()
+        .collection("users")
+        .doc(user.email)
+        .get()
+        .then(doc => doc.exists ? doc.data().xp || 0 : 0);
+        document.getElementById("xp").innerText = xp;
+        
+      getUpcomingExam().then(result => {
+  if (!result) {
+    document.getElementById("nextExam").innerText = "No upcoming exams 🎉";
+  document.getElementById("daysLeft").innerText = "--";
+  return;
   }
-
-  snap.forEach(doc => {
-    const g = doc.data();
-    if (g.completedDate === todayKey) return;
-
-    const div = document.createElement("div");
-    div.className = "goal";
-    div.innerHTML = `
-      <span>${g.title}</span>
-      <button class="done">Done (+10 XP)</button>
-    `;
-
-    div.querySelector("button").onclick = () => completeGoal(user, doc.id);
-    goalsBox.appendChild(div);
-  });
-}
-
-async function completeGoal(user, goalId) {
-  const userRef = db.collection("users").doc(user.email);
-
-  await db.runTransaction(async tx => {
-    const snap = await tx.get(userRef);
-    const xp = snap.data().xp || 0;
-
-    tx.update(userRef, { xp: xp + 10 });
-    tx.update(userRef.collection("goals").doc(goalId), {
-      completedDate: todayKey
+    const [examName, examDate, daysLeft] = result;
+    document.getElementById("nextExam").innerText = examName + " on " + examDate.toDateString();
+    document.getElementById("daysLeft").innerText = daysLeft;
     });
-
-    tx.set(userRef.collection("xp_history").doc(), {
-      change: +10,
-      reason: "Completed daily goal",
-      date: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  });
-
-  location.reload();
-}
-
-async function processMissedGoals(user) {
-  const userRef = db.collection("users").doc(user.email);
-  const goalsSnap = await userRef.collection("goals")
-    .where("type", "==", "daily")
-    .get();
-
-  let penalty = 0;
-
-  goalsSnap.forEach(doc => {
-    const g = doc.data();
-    if (g.completedDate !== todayKey && g.lastChecked !== todayKey) {
-      penalty += 5;
-      doc.ref.update({ lastChecked: todayKey });
+    } else {
+      signInBtn.style.display = "inline-block";
+      signUpBtn.style.display = "inline-block";
+      logoutBtn.style.display = "none";
+      welcomeMsg.innerText = "";
     }
   });
 
-  if (penalty > 0) {
-    await userRef.update({
-      xp: firebase.firestore.FieldValue.increment(-penalty)
-    });
-
-    await userRef.collection("xp_history").add({
-      change: -penalty,
-      reason: "Missed daily goals",
-      date: firebase.firestore.FieldValue.serverTimestamp()
+  function logout() {
+    auth.signOut().then(() => {
+      alert("Logged out");
     });
   }
-}
+  
 
-async function loadNextExam(user) {
-  const now = new Date();
-  const snap = await db.collection("users")
-    .doc(user.email)
-    .collection("exams")
-    .orderBy("examDateTime")
-    .get();
 
-  for (const doc of snap.docs) {
-    const exam = doc.data();
-    const examDate = exam.examDateTime.toDate();
-
-    if (examDate >= now) {
-      const daysLeft = Math.ceil(
-        (examDate - now) / (1000 * 60 * 60 * 24)
-      );
-
-      document.getElementById("examName").innerText =
-        `${exam.subject} (${examDate.toDateString()})`;
-      document.getElementById("daysLeft").innerText = daysLeft;
+  function getUpcomingExam() {
+  return new Promise((resolve, reject) => {
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      resolve(null);
       return;
     }
-  }
 
-  document.getElementById("examName").innerText = "No upcoming exams 🎉";
-  document.getElementById("daysLeft").innerText = "--";
+    const now = new Date();
+
+    firebase.firestore()
+      .collection("users")
+      .doc(user.email)
+      .collection("exams")
+      .orderBy("examDateTime")
+      .get()
+      .then(snapshot => {
+        for (const doc of snapshot.docs) {
+          const data = doc.data();
+          const examDate = data.examDateTime.toDate();
+
+          if (examDate >= now) {
+            const daysLeft = Math.ceil(
+              (examDate - now) / (1000 * 60 * 60 * 24)
+            );
+
+            resolve([
+              data.subject,     // exam name
+              examDate,         // exam date (Date object)
+              daysLeft          // days left
+            ]);
+            return;
+          }
+        }
+
+        resolve(null); // No upcoming exams
+      })
+      .catch(error => reject(error));
+  });
 }
 
-function logout() {
-  auth.signOut();
-}
 </script>
 
 </body>
