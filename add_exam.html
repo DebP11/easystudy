@@ -92,6 +92,7 @@
 </header>
 
 <main>
+    <button onclick="window.location.href='index.html'" style="margin: 20px auto; display: block; background: #334155; color: white; border-radius: 8px; padding: 10px 16px; border: none; cursor: pointer;">← Back to Home</button>
   <div class="card">
     <h2>📝 Exam Details</h2>
 
@@ -134,7 +135,6 @@
   // 🚨 Protect page (only logged-in users)
   auth.onAuthStateChanged(user => {
     if (!user) {
-      window.location.href = "auth.html";
     }
   });
 
@@ -168,6 +168,7 @@
         document.getElementById("subject").value = "";
         document.getElementById("examDate").value = "";
         document.getElementById("examTime").value = "";
+
       })
       .catch(error => {
         statusMsg.innerText = "❌ Error: " + error.message;
