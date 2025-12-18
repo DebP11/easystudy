@@ -40,9 +40,16 @@
   } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
   import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+  // Firebase Config
   const firebaseConfig = {
-    // 🔴 YOUR CONFIG HERE
-  };
+  apiKey: "AIzaSyBMEmLkJ8_-A1iSD_IF2NccOJHdcRm_Lug",
+  authDomain: "study-2f23d.firebaseapp.com",
+  projectId: "study-2f23d",
+  storageBucket: "study-2f23d.firebasestorage.app",
+  messagingSenderId: "213003244292",
+  appId: "1:213003244292:web:ef994cb72bc3d265037651",
+  measurementId: "G-WNCK3CT1V2"
+};
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
