@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>StudyEase</title>
+<title>Sign In | Sign Up</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
   body {
@@ -12,163 +14,191 @@
     font-family: 'Poppins', sans-serif;
     background: #0F172A;
     color: #E5E7EB;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
   }
 
-  header {
-    text-align: center;
-    padding: 20px;
+  .auth-box {
     background: #1E293B;
-  }
-
-  header h1 {
-    margin: 0;
-    color: #3B82F6;
-  }
-
-  main {
-    padding: 20px;
-    display: grid;
-    gap: 20px;
-    max-width: 600px;
-    margin: auto;
-  }
-
-  .card {
-    background: #1E293B;
-    padding: 20px;
+    padding: 30px 25px;
+    width: 350px;
     border-radius: 12px;
+    box-sizing: border-box;
   }
 
-  button {
-    background: #3B82F6;
-    border: none;
-    padding: 10px;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 10px;
+  h2 {
+    text-align: center;
+    color: #3B82F6;
+    margin-bottom: 20px;
+  }
+
+  input, button {
     width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: none;
+    box-sizing: border-box;
   }
 
   input {
-    padding: 10px;
-    width: 100%;
-    border-radius: 6px;
-    border: none;
-    margin-top: 10px;
+    font-size: 1rem;
   }
 
-  .link {
+  button {
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .switch {
+    margin-top: 12px;
+    text-align: center;
     color: #60A5FA;
     cursor: pointer;
-    text-align: center;
-    margin-top: 10px;
+    font-size: 0.9rem;
   }
 
   .hidden {
     display: none;
   }
 
-  #timer {
-    font-size: 2rem;
-    margin: 10px 0;
+  .social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    background: #DB4437; /* Default Google Red */
+    color: white;
+    font-weight: 500;
   }
 
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  li {
-    background: #334155;
-    padding: 6px;
-    margin-top: 6px;
-    border-radius: 6px;
-  }
-
-  footer {
-    text-align: center;
-    padding: 15px;
-    color: #94A3B8;
+  .phone-btn {
+    background: #4CAF50;
   }
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>StudyEase</h1>
-  <p>Study smart. Stay calm.</p>
-</header>
+<div class="auth-box">
 
-<main>
+  <!-- SIGN IN -->
+  <div id="signIn">
+    <h2>Sign In</h2>
+    <input type="email" id="signin-email" placeholder="Email">
+    <input type="password" id="signin-password" placeholder="Password">
+    <button id="signInBtn">Sign In</button>
 
-  <!-- AUTH UI -->
-  <section class="card" id="authSection">
+    <button id="googleSignInBtn" class="social-btn"><i class="fab fa-google"></i> Sign in with Google</button>
+    <button id="phoneSignInBtn" class="social-btn phone-btn"><i class="fas fa-phone"></i> Sign in with Phone</button>
 
-    <!-- SIGN IN -->
-    <div id="signInForm">
-      <h2>🔐 Sign In</h2>
-      <input type="email" placeholder="Email">
-      <input type="password" placeholder="Password">
-      <button id="signInBtn">Sign In</button>
-      <p class="link" onclick="showSignUp()">Don’t have an account? Sign Up</p>
-    </div>
-
-    <!-- SIGN UP -->
-    <div id="signUpForm" class="hidden">
-      <h2>📝 Sign Up</h2>
-      <input type="text" placeholder="Name">
-      <input type="email" placeholder="Email">
-      <input type="password" placeholder="Password">
-      <button id="signUpBtn">Create Account</button>
-      <p class="link" onclick="showSignIn()">Already have an account? Sign In</p>
-    </div>
-
-  </section>
-
-  <!-- APP CONTENT (SHOW AFTER LOGIN USING FIREBASE) -->
-  <div id="appContent" class="hidden">
-
-    <section class="card">
-      <h2>⏱️ Study Timer</h2>
-      <div id="timer">25:00</div>
-      <button>Start</button>
-      <button>Reset</button>
-    </section>
-
-    <section class="card">
-      <h2>📝 Today's Tasks</h2>
-      <input type="text" placeholder="Add a task">
-      <button>Add Task</button>
-      <ul></ul>
-    </section>
-
-    <section class="card">
-      <h2>🌬️ Calm Break</h2>
-      <button>Start 1-min Breathing</button>
-      <p></p>
-    </section>
-
+    <div class="switch" onclick="showSignUp()">Don’t have an account? Sign Up</div>
   </div>
 
-</main>
+  <!-- SIGN UP -->
+  <div id="signUp" class="hidden">
+    <h2>Sign Up</h2>
+    <input type="text" id="signup-name" placeholder="Name">
+    <input type="email" id="signup-email" placeholder="Email">
+    <input type="password" id="signup-password" placeholder="Password">
+    <button id="signUpBtn">Create Account</button>
 
-<footer>
-  Made for students • No pressure 🌱
-</footer>
+    <button id="googleSignUpBtn" class="social-btn"><i class="fab fa-google"></i> Sign up with Google</button>
+    <button id="phoneSignUpBtn" class="social-btn phone-btn"><i class="fas fa-phone"></i> Sign up with Phone</button>
 
-<!-- ONLY UI TOGGLE JS (OPTIONAL – YOU CAN REMOVE IF YOU WANT) -->
+    <div class="switch" onclick="showSignIn()">Already have an account? Sign In</div>
+  </div>
+
+</div>
+
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+
 <script>
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBMEmLkJ8_-A1iSD_IF2NccOJHdcRm_Lug",
+  authDomain: "study-2f23d.firebaseapp.com",
+  projectId: "study-2f23d",
+  storageBucket: "study-2f23d.firebasestorage.app",
+  messagingSenderId: "213003244292",
+  appId: "1:213003244292:web:ef994cb72bc3d265037651",
+  measurementId: "G-WNCK3CT1V2"
+};
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // SHOW SIGN UP / SIGN IN
   function showSignUp() {
-    document.getElementById("signInForm").classList.add("hidden");
-    document.getElementById("signUpForm").classList.remove("hidden");
+    document.getElementById("signIn").classList.add("hidden");
+    document.getElementById("signUp").classList.remove("hidden");
   }
 
   function showSignIn() {
-    document.getElementById("signUpForm").classList.add("hidden");
-    document.getElementById("signInForm").classList.remove("hidden");
+    document.getElementById("signUp").classList.add("hidden");
+    document.getElementById("signIn").classList.remove("hidden");
   }
+
+  // EMAIL/PASSWORD SIGN UP
+  document.getElementById("signUpBtn").addEventListener("click", () => {
+    const email = document.getElementById("signup-email").value;
+    const password = document.getElementById("signup-password").value;
+    const name = document.getElementById("signup-name").value;
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        userCredential.user.updateProfile({ displayName: name });
+        alert("Account created! Welcome " + name);
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  });
+
+  // EMAIL/PASSWORD SIGN IN
+  document.getElementById("signInBtn").addEventListener("click", () => {
+    const email = document.getElementById("signin-email").value;
+    const password = document.getElementById("signin-password").value;
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        alert("Welcome back " + (userCredential.user.displayName || "User"));
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  });
+
+  // GOOGLE SIGN IN / SIGN UP
+  function googleSignIn() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then((result) => alert("Signed in as " + result.user.displayName))
+      .catch((error) => alert(error.message));
+  }
+  document.getElementById("googleSignInBtn").addEventListener("click", googleSignIn);
+  document.getElementById("googleSignUpBtn").addEventListener("click", googleSignIn);
+
+  // PHONE AUTHENTICATION
+  function phoneAuth() {
+    const phoneNumber = prompt("Enter your phone number with country code (+91...)");
+    const appVerifier = new firebase.auth.RecaptchaVerifier('phoneSignInBtn', { size: 'invisible' });
+
+    auth.signInWithPhoneNumber(phoneNumber, appVerifier)
+      .then((confirmationResult) => {
+        const code = prompt("Enter the OTP sent to your phone:");
+        return confirmationResult.confirm(code);
+      })
+      .then((result) => alert("Signed in as " + result.user.phoneNumber))
+      .catch((error) => alert(error.message));
+  }
+  document.getElementById("phoneSignInBtn").addEventListener("click", phoneAuth);
+  document.getElementById("phoneSignUpBtn").addEventListener("click", phoneAuth);
 </script>
 
 </body>
