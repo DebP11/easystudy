@@ -6,37 +6,126 @@
 
 <style>
   body {
-    font-family: Arial;
-    background: #eef2ff;
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    min-height: 100vh;
     padding: 30px;
   }
-  .goal {
-    background: white;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 10px;
+
+  h2 {
+    text-align: center;
+    color: white;
+    margin-bottom: 25px;
   }
+
+  .container {
+    max-width: 900px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .goal-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s;
+  }
+
+  .goal-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .goal-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1f2933;
+  }
+
+  .goal-type {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #6b7280;
+  }
+
+  .goal-days {
+    font-size: 13px;
+    color: #4b5563;
+    margin-top: 6px;
+  }
+
+  .xp-badge {
+    margin-top: 12px;
+    display: inline-block;
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    width: fit-content;
+  }
+
+  .status {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+
+  .done {
+    color: #16a34a;
+    font-weight: bold;
+  }
+
+  .pending {
+    color: #dc2626;
+    font-weight: bold;
+  }
+
   button {
-    padding: 8px 12px;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 12px;
     border: none;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .done-btn {
+    background: #4f46e5;
+    color: white;
+  }
+
+  .done-btn:hover {
+    background: #4338ca;
+  }
+
+  .completed-btn {
     background: #22c55e;
     color: white;
-    border-radius: 6px;
-    cursor: pointer;
+    cursor: default;
   }
 </style>
 </head>
 
 <body>
 
-<h2>My Goals</h2>
-<div id="goals"></div>
+<h2>📋 My Goals</h2>
+
+<div class="container" id="goals"></div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import {
-    getFirestore, collection, getDocs, doc, updateDoc,
-    increment, addDoc, serverTimestamp
+    getFirestore, collection, getDocs, doc,
+    updateDoc, increment, addDoc, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
   import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
@@ -66,22 +155,32 @@
 
     goalsDiv.innerHTML = "";
 
-    snap.forEach(d => {
-      const g = d.data();
+    snap.forEach(docSnap => {
+      const g = docSnap.data();
 
       goalsDiv.innerHTML += `
-        <div class="goal">
-          <b>${g.title}</b><br>
-          Type: ${g.type}<br>
-          XP: ${g.xp}<br>
-          Status: ${g.completed ? "Done ✅" : "Pending"}<br><br>
-          ${!g.completed ? `<button onclick="completeGoal('${d.id}', ${g.xp}, '${g.title}')">Mark Done</button>` : ""}
+        <div class="goal-card">
+          <div>
+            <div class="goal-title">${g.title}</div>
+            <div class="goal-type">Type: ${g.type}</div>
+            ${g.days?.length ? `<div class="goal-days">Days: ${g.days.join(", ")}</div>` : ""}
+            <div class="xp-badge">⭐ 10 XP</div>
+            <div class="status ${g.completed ? "done" : "pending"}">
+              ${g.completed ? "Completed" : "Pending"}
+            </div>
+          </div>
+
+          ${
+            g.completed
+              ? `<button class="completed-btn">Completed ✔</button>`
+              : `<button class="done-btn" onclick="completeGoal('${docSnap.id}', '${g.title}')">Mark as Done</button>`
+          }
         </div>
       `;
     });
   });
 
-  window.completeGoal = async (goalId, xp, title) => {
+  window.completeGoal = async (goalId, title) => {
     const user = auth.currentUser;
     if (!user) return;
 
@@ -92,19 +191,18 @@
 
     await updateDoc(
       doc(db, "users", user.uid),
-      { xp: increment(xp) }
+      { xp: increment(10) }
     );
 
     await addDoc(
       collection(db, "users", user.uid, "xpHistory"),
       {
-        amount: xp,
+        amount: 10,
         reason: `Completed goal: ${title}`,
         timestamp: serverTimestamp()
       }
     );
 
-    alert("XP added 🚀");
     location.reload();
   };
 </script>
