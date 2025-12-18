@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Add Exam • StudyEase</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #0F172A;
+    color: #E5E7EB;
+  }
+
+  header {
+    background: #1E293B;
+    padding: 18px;
+    text-align: center;
+  }
+
+  header h1 {
+    margin: 0;
+    color: #3B82F6;
+  }
+
+  main {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+
+  .card {
+    background: #1E293B;
+    padding: 25px;
+    border-radius: 14px;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-top: 14px;
+    font-size: 14px;
+    color: #CBD5F5;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-family: inherit;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background: #3B82F6;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
+  .info {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 13px;
+    color: #94A3B8;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Add Exam</h1>
+  <p>Plan early, stress less 📚</p>
+</header>
+
+<main>
+  <div class="card">
+    <h2>📝 Exam Details</h2>
+
+    <label>Subject Name</label>
+    <input type="text" id="subject" placeholder="e.g. Mathematics">
+
+    <label>Exam Date</label>
+    <input type="date" id="examDate">
+
+    <label>Exam Time</label>
+    <input type="time" id="examTime">
+
+    <button onclick="addExam()">Add Exam</button>
+
+    <div class="info" id="statusMsg"></div>
+  </div>
+</main>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // 🔥 Firebase Config (same as your project)
+  const firebaseConfig = {
+    apiKey: "AIzaSyBMEmLkJ8_-A1iSD_IF2NccOJHdcRm_Lug",
+    authDomain: "study-2f23d.firebaseapp.com",
+    projectId: "study-2f23d",
+    storageBucket: "study-2f23d.firebasestorage.app",
+    messagingSenderId: "213003244292",
+    appId: "1:213003244292:web:ef994cb72bc3d265037651"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // 🚨 Protect page (only logged-in users)
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = "auth.html";
+    }
+  });
+
+  // ➕ Add Exam Function
+  function addExam() {
+    const subject = document.getElementById("subject").value.trim();
+    const date = document.getElementById("examDate").value;
+    const time = document.getElementById("examTime").value;
+    const statusMsg = document.getElementById("statusMsg");
+
+    if (!subject || !date || !time) {
+      statusMsg.innerText = "⚠️ Please fill all fields";
+      return;
+    }
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const examDateTime = new Date(`${date}T${time}`);
+
+    db.collection("users")
+      .doc(user.email)
+      .collection("exams")
+      .add({
+        subject: subject,
+        examDateTime: firebase.firestore.Timestamp.fromDate(examDateTime),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        statusMsg.innerText = "✅ Exam added successfully!";
+        document.getElementById("subject").value = "";
+        document.getElementById("examDate").value = "";
+        document.getElementById("examTime").value = "";
+      })
+      .catch(error => {
+        statusMsg.innerText = "❌ Error: " + error.message;
+      });
+  }
+</script>
+
+</body>
+</html>
