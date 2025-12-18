@@ -157,6 +157,7 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
 <script>
   const firebaseConfig = {
@@ -184,8 +185,9 @@
       welcomeMsg.innerText = `Hi, ${user.displayName || user.email}`;
       getUpcomingExam().then(result => {
   if (!result) {
-    console.log("No upcoming exams 🎉");
-    return;
+    document.getElementById("nextExam").innerText = "No upcoming exams 🎉";
+  document.getElementById("daysLeft").innerText = "--";
+  return;
   }
     const [examName, examDate, daysLeft] = result;
     document.getElementById("nextExam").innerText = examName + " on " + examDate.toDateString();
